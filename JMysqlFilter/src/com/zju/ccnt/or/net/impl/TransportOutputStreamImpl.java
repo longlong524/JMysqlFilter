@@ -18,7 +18,7 @@ package com.zju.ccnt.or.net.impl;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.LinkedList;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -43,6 +43,8 @@ public class TransportOutputStreamImpl extends XOutputStreamImpl implements Tran
 	
 	private long writeSocketInterval;
 	
+	private int maxSize;
+	
 	/**
 	 * 
 	 */
@@ -52,6 +54,7 @@ public class TransportOutputStreamImpl extends XOutputStreamImpl implements Tran
 		deque=new ByteLinkedBlockingDeque(bytecapacity,size);
 		buffer=new byte[bytecapacity];
 		e=null;
+		maxSize=size;
 		this.writeSocketInterval=writeSocketInterval;
 		new Thread(this).start();
 	}
@@ -76,7 +79,7 @@ public class TransportOutputStreamImpl extends XOutputStreamImpl implements Tran
 	@Override
 	public void run() {
 		isrun.set(true);
-		List<AbstractPacket> list=new LinkedList<AbstractPacket>();
+		List<AbstractPacket> list=new ArrayList<AbstractPacket>(maxSize);
 		//int kong=0;
 		while(isrun.get()&&e==null){
 			try {
